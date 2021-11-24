@@ -6,9 +6,6 @@ Autoencoder-based background reconstruction and foreground segmentation with bac
 
 
 
-https://user-images.githubusercontent.com/44267731/143236280-4d8fd13b-c4c9-4dd8-aabe-76cff7f4bbdb.mp4
-
-
 
 https://user-images.githubusercontent.com/44267731/143236111-0354801d-f0e4-4500-89b7-c08ea39be24f.mp4
 
