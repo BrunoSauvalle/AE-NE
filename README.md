@@ -58,7 +58,7 @@ and save it in some folder
 
 Warning : Different runs of the model with the same inputs may lead to small differences in evaluation results compared to the published results  due to the random initialization of the autoencoder and the random sampling of the images during training.
 
-
+To evaluate the model on the non video datasets Clevrtex, Shapestacks and ObjectsRoom, see AST repository
 
 
 
