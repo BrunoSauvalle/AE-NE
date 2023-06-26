@@ -39,8 +39,10 @@ def create_parser():
     parser.add_argument('--e_complex', type=int, default=20, help="minimum number of epochs for complex backgrounds")
     parser.add_argument('--supervised_mode', dest='unsupervised_mode', action='store_false')
     parser.add_argument('--n_iterations', type =int,default = 2500, help='number of iterations for supervised mode')
-    parser.add_argument('--background_complexity', default=False,  help='background complexity for supervised mode')
     parser.set_defaults(unsupervised_mode=True)
+    parser.add_argument('--complex_background', action='store_true',help='background complexity for supervised mode')
+    parser.add_argument('--simple_background', dest='complex_background', action='store_false')
+    parser.set_defaults(complex_background=True)
     parser.add_argument('--use_trained_model',dest='train_model', action='store_false')
     parser.set_defaults(train_model=True)
 

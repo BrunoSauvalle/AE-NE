@@ -78,7 +78,7 @@ def evaluate_background_complexity_using_trained_model(args,dataset, netBE, netB
 def background_training_loop(args,netBE, netBG, optimizer,
                              dataset, model_path,
                              batch_size, device,
-                             number_of_steps, evaluation_step):
+                             number_of_steps, evaluation_step,background_complexity):
 
     traindataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
                                                   num_workers=4,
@@ -93,7 +93,7 @@ def background_training_loop(args,netBE, netBG, optimizer,
 
     saved_network = False
     save_network = False
-    complex_background = False
+
 
     learning_rate_reduction_step = (4 * number_of_steps) // 5
     learning_rate_is_reduced = False
@@ -124,7 +124,7 @@ def background_training_loop(args,netBE, netBG, optimizer,
 
             if saved_network == True:
                 print('training finished')
-                return netBE, netBG, complex_background
+                return netBE, netBG, background_complexity
 
             if time.time() - last_message_time > 15:
                 last_message_time = time.time()
@@ -135,20 +135,21 @@ def background_training_loop(args,netBE, netBG, optimizer,
 
             if step == evaluation_step and args.unsupervised_mode:
 
-                complex_background = evaluate_background_complexity_using_trained_model(args,dataset, netBE, netBG, batch_size)
+                background_complexity = evaluate_background_complexity_using_trained_model(args,dataset, netBE, netBG, batch_size)
 
-                if complex_background:
+                if background_complexity:
                     print('complex background detected, aborting current training and starting new training with updated model ')
-                    return netBE, netBG, complex_background
+                    return netBE, netBG, background_complexity
                 else:
                     print('simple background, finishing training')
 
 
             if save_network == True:
+                assert background_complexity == netBE.complexity
                 torch.save({'complexity': netBE.complexity, 'encoder_state_dict': netBE.state_dict(),
                             'generator_state_dict': netBG.state_dict()
                             }, model_path)
-                print('final model saved')
+                print(f'final model saved, background complexity is {background_complexity}')
                 saved_network = True
 
             if step >= learning_rate_reduction_step and learning_rate_is_reduced == False:
@@ -165,31 +166,31 @@ def train_dynamic_background_model(args, dataset,model_path,batch_size):
     if args.unsupervised_mode:
         number_of_steps = args.n_simple
         evaluation_step = args.n_eval
-        complexity = False
+        background_complexity = False
     else:
         number_of_steps = args.n_iterations
-        complexity = args.background_complexity
+        background_complexity = args.complex_background
         evaluation_step = 1e10 # no evaluation in supervised mode
 
     lr = 5e-4
 
     device = torch.device("cuda", 0)
 
-    netBE, netBG = utils.setup_background_models(device, dataset.image_height,dataset.image_width,complexity)
+    netBE, netBG = utils.setup_background_models(device, dataset.image_height,dataset.image_width,complexity = background_complexity)
 
     optimizer = optim.Adam([{'params': netBG.parameters()}, {'params': netBE.parameters()}], lr=lr, betas=(0.90, 0.999))
 
-    netBE, netBG, complex_background = background_training_loop(args,netBE, netBG, optimizer,
+    netBE, netBG, background_complexity = background_training_loop(args,netBE, netBG, optimizer,
                                                                                     dataset,
                                                                                     model_path, batch_size, device,
-                                                                                    number_of_steps, evaluation_step)
+                                                                                    number_of_steps, evaluation_step,background_complexity)
 
-    if complex_background: # if the background is complex, start new training with more complex model
+    if background_complexity and args.unsupervised_mode: # if the background is complex, start new training with more complex model (unsupervised mode)
 
         number_of_steps = max(args.n_complex, (len(dataset) // batch_size) * args.e_complex)
         evaluation_step = 1e10 # no evaluation
 
-        netBE, netBG = utils.setup_background_models(device, dataset.image_height,dataset.image_width, complex_background)
+        netBE, netBG = utils.setup_background_models(device, dataset.image_height,dataset.image_width, background_complexity)
 
         optimizer = optim.Adam([{'params': netBG.parameters()}, {'params': netBE.parameters()}], lr=lr,
                                betas=(0.90, 0.999))
@@ -197,7 +198,7 @@ def train_dynamic_background_model(args, dataset,model_path,batch_size):
                                                                                         dataset, model_path,
                                                                                         batch_size, device,
                                                                                         number_of_steps,
-                                                                                        evaluation_step)
+                                                                                        evaluation_step,background_complexity)
 
     return netBE, netBG
 
