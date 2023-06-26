@@ -11,6 +11,17 @@ https://user-images.githubusercontent.com/44267731/143236111-0354801d-f0e4-4500-
 
 
 
+https://user-images.githubusercontent.com/44267731/189395165-4f86ec90-68a7-4ecc-8521-a95b819198a9.mp4
+
+
+https://user-images.githubusercontent.com/44267731/189395821-a53fab5f-46a4-4026-8b19-f8e5938f4c0f.mp4
+
+
+
+https://user-images.githubusercontent.com/44267731/189397758-8977011a-f927-4e5f-a5ae-0c63886285af.mp4
+
+
+
 ## Requirements
 
 The model needs Pytorch (>= 1.7.1) and Torchvision with cuda capability (see https://pytorch.org/ )
