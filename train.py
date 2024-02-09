@@ -172,7 +172,7 @@ def train_dynamic_background_model(args, dataset,model_path,batch_size):
         background_complexity = args.complex_background
         evaluation_step = 1e10 # no evaluation in supervised mode
 
-    lr = 5e-4
+    lr = args.learning_rate # default 5e-4
 
     device = torch.device("cuda", 0)
 

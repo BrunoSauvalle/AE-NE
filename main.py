@@ -45,6 +45,9 @@ def create_parser():
     parser.set_defaults(complex_background=True)
     parser.add_argument('--use_trained_model',dest='train_model', action='store_false')
     parser.set_defaults(train_model=True)
+    parser.add_argument('--learning_rate', type=float, default=5e-4, help="learning rate")
+    parser.add_argument('--batch_size', type=int, default=32, help="batch size")
+
 
     return parser
 
@@ -112,7 +115,9 @@ def compute_dynamic_backgrounds_and_masks(args,video_paths):
             shutil.rmtree(video_paths[key])
         os.mkdir(video_paths[key])
 
-    batch_size = 32
+
+    batch_size = args.batch_size # default 32
+
     device = torch.device("cuda", 0)
     model_path = os.path.join(video_paths['models'],'trained_model.pth')
 

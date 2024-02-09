@@ -70,8 +70,9 @@ class Background_Encoder(nn.Module):
             print('image size not implemented : image is too small')
             exit(0)
         if max_dim > 1000:
-            print('image size not implemented : image is too large')
-            exit(0)
+            print('Warning: large image size. You may need to reduce batch size to avoid memory overflow '
+                  'and adjust other hyperparameters such as learning rate and numbers of steps accordingly')
+
 
         image_shapes = [(image_height, image_width)] # list of image shapes for all layers of the encoder
         kers = []  # list  of kernel sizes for all layers
@@ -129,6 +130,13 @@ class Background_Encoder(nn.Module):
                 nchs = [3, 64, 160, 160,160, 32, 16]
             else:
                 nchs = [3, 64, 160, 160, 160, 16, 16]
+
+        elif n_blocks == 7:
+
+            if complexity == False:
+                nchs = [3, 64, 160, 160,160, 160, 32, 16]
+            else:
+                nchs = [3, 64, 160, 160,160,  160, 16, 16]
         else:
             print('image size not implemented in this model')
             exit(0)
@@ -215,6 +223,12 @@ class Background_Generator(nn.Module):
                 nchs = [4, 144, 256, 512,256, 32, 16]
             else:
                 nchs = [4, 144, 640, 1280, 640, 16, 16]
+
+        elif n_blocks == 7:
+            if complexity == False:
+                nchs = [4, 144, 256, 512, 512, 256, 32, 16]
+            else:
+                nchs = [4, 144, 640, 1280,1280, 640, 16, 16]
         else:
             print('image size not implemented in this model')
             exit(0)

@@ -34,7 +34,10 @@ To install other requirements:
 ```setup
 pip install -r requirements.txt
 ```
-The model has been tested on Nvidia RTX 2080 TI and Nvidia RTX 3090 GPU.
+The model has been tested on Nvidia RTX 2080 TI and Nvidia RTX 3090 GPU for image_sizes lower than 1000x1000
+
+Higher image resolutions are also supported but may require reducing the default batch size  in order to avoid GPU memory overflow and updating other hyperparameters such as learning rate and number of steps accordingly 
+
 
 ## How to use the model
 
